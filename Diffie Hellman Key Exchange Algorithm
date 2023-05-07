@@ -1,0 +1,59 @@
+from sympy import *
+import math,random
+#diffie-Hellman Key Exchange
+def prime(n): # A function to check a number is prime or not and generate another prime
+  if(isprime(n)==False):
+    print(n,"is not a prime")
+    while(isprime(n)!=True):
+      n+=1
+  return n
+def secret(a,b,n,str): # This function is to print Secret key for both sender and receiver 
+  print("Secret Key of",str,pow(b,a)%n)
+def primitiveRoot(n,x): #This function is to generate primitive root
+  final=[]
+  req=set()
+  for i in range(1,n): #It is like Φ(n) but it has the actual value which is has gcd(i,n)==1 
+    if(math.gcd(i,n)==1):
+      req.add(i)
+  for i in range(1,n):  #If anny set is match with required set then the actual i value is stored in list final
+    temp=set()
+    for p in range(1,n):
+      temp.add((i**p)%n)
+    if(sorted(req)==sorted(temp)):
+      final.append(i)
+    if(x in final): #if our input is in final List return same value 
+      return x
+  ind=random.randint(0,len(final))
+  return final[ind]
+print("\t\t\tGlobal Public Element")
+
+q=int(input("Enter value for Q"))
+
+q=prime(q)
+print("The Prime value for Q is ",q)
+alpha=int(input("Enter the value for α "))
+alpha=primitiveRoot(q,alpha)
+
+print("The value of α is",alpha)
+
+print("\t\t\tKey Generation By Sender")
+
+xa=int(input("Enter the Private key of Xa"))
+
+ya=(alpha**xa)%q
+
+print("Key pair{",xa,",",ya,"}")
+
+print("\t\t\tKey Generation By Receiver")
+
+xb=int(input("Enter the private key of Xb"))
+
+yb=pow(alpha,xb)%q
+
+print("Key pair{",xb,",",yb,"}")
+
+print("Secret key genration")
+
+secret(xa,yb,q,"sender")
+
+secret(xb,ya,q,"receiver")
